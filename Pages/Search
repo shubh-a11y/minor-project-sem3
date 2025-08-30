@@ -1,0 +1,308 @@
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "../Components/utils/createPageUrl";
+import { Service } from "../Components/utils/serviceApi";
+import { 
+  Search as SearchIcon,
+  TrendingUp,
+  Clock,
+  ArrowRight,
+  FileText,
+  CreditCard,
+  GraduationCap,
+  Heart,
+  Briefcase,
+  Users,
+  Building,
+  Calculator,
+  Star
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useLanguage } from '../components/contexts/LanguageContext';
+
+const categoryIcons = {
+  documents: FileText,
+  identity: CreditCard,
+  education: GraduationCap,
+  health: Heart,
+  employment: Briefcase,
+  welfare: Users,
+  banking: Building,
+  tax: Calculator
+};
+
+const popularSearches = [
+  "DigiLocker",
+  "Aadhaar Update",
+  "PAN Card",
+  "10th Marksheet",
+  "12th Certificate",
+  "Passport",
+  "Driving License",
+  "Ayushman Bharat",
+  "EPF Withdrawal",
+  "Income Certificate"
+];
+
+export default function SearchPage() {
+  const { t } = useLanguage();
+  const [services, setServices] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  useEffect(() => {
+    loadServices();
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm.length > 2) {
+      performSearch();
+    } else {
+      setSearchResults([]);
+      setHasSearched(false);
+    }
+  }, [searchTerm, services]);
+
+  const loadServices = async () => {
+    try {
+      const data = await Service.list("-popular", 100);
+      setServices(data);
+    } catch (error) {
+      console.error("Error loading services:", error);
+    }
+  };
+
+  const performSearch = () => {
+    setLoading(true);
+    setHasSearched(true);
+    
+    const results = services.filter(service =>
+      service.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      service.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    // Sort by relevance (exact matches first, then partial matches)
+    results.sort((a, b) => {
+      const aExactMatch = a.name.toLowerCase().includes(searchTerm.toLowerCase());
+      const bExactMatch = b.name.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      if (aExactMatch && !bExactMatch) return -1;
+      if (!aExactMatch && bExactMatch) return 1;
+      
+      // If both are exact matches or both are partial, sort by popularity
+      if (a.popular && !b.popular) return -1;
+      if (!a.popular && b.popular) return 1;
+      
+      return 0;
+    });
+
+    setSearchResults(results);
+    setLoading(false);
+  };
+
+  const handlePopularSearch = (term) => {
+    setSearchTerm(term);
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-bold text-gray-900">
+          {t('searchTitle')}
+        </h1>
+        <p className="text-xl text-gray-600">
+          {t('searchSubtitle')}
+        </p>
+      </div>
+
+      {/* Search Bar */}
+      <div className="relative max-w-2xl mx-auto">
+        <SearchIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6" />
+        <Input
+          placeholder="Search for services... (e.g., 'Aadhaar card update', 'DigiLocker login')"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pl-14 h-16 text-lg rounded-2xl border-2 border-gray-200 focus:border-orange-300 saffron-shadow"
+        />
+        {loading && (
+          <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-orange-500 border-t-transparent"></div>
+          </div>
+        )}
+      </div>
+
+      {/* Popular Searches */}
+      {!hasSearched && (
+        <div className="space-y-6">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-2">
+              <TrendingUp className="w-6 h-6 text-orange-600" />
+              {t('popularSearches')}
+            </h2>
+            <p className="text-gray-600">{t('popularSearchesSubtitle')}</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {popularSearches.map((search) => (
+              <button
+                key={search}
+                onClick={() => handlePopularSearch(search)}
+                className="bg-white hover:bg-orange-50 border border-gray-200 hover:border-orange-300 rounded-xl px-4 py-3 text-sm font-medium text-gray-700 hover:text-orange-700 transition-all hover-lift saffron-shadow"
+              >
+                {search}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Search Results */}
+      {hasSearched && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-gray-900">
+              {t('searchResults')}
+              {searchResults.length > 0 && (
+                <span className="text-lg font-normal text-gray-600 ml-2">
+                  ({searchResults.length} {t('found')})
+                </span>
+              )}
+            </h2>
+            {searchTerm && (
+              <button
+                onClick={() => {
+                  setSearchTerm("");
+                  setHasSearched(false);
+                }}
+                className="text-orange-600 hover:text-orange-700 font-medium"
+              >
+                {t('clearSearch')}
+              </button>
+            )}
+          </div>
+
+          {searchResults.length === 0 ? (
+            <div className="text-center py-16">
+              <SearchIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                {t('noResultsFor')} "{searchTerm}"
+              </h3>
+              <p className="text-gray-500 mb-6">
+                {t('tryDifferentKeywords')}
+              </p>
+              
+              <div className="space-y-4">
+                <p className="text-sm font-medium text-gray-700">{t('suggestions')}:</p>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {popularSearches.slice(0, 5).map((search) => (
+                    <button
+                      key={search}
+                      onClick={() => handlePopularSearch(search)}
+                      className="bg-orange-100 hover:bg-orange-200 text-orange-700 px-3 py-1 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      {search}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {searchResults.map((service) => {
+                const CategoryIcon = categoryIcons[service.category] || FileText;
+                return (
+                  <Link 
+                    key={service.id} 
+                    to={createPageUrl(`ServiceGuide?id=${service.id}`)}
+                  >
+                    <Card className="hover-lift cursor-pointer border-0 saffron-shadow bg-white/80 backdrop-blur">
+                      <CardContent className="p-6">
+                        <div className="flex items-start gap-4">
+                          <div className="w-12 h-12 bg-gradient-to-r from-orange-100 to-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <CategoryIcon className="w-6 h-6 text-orange-600" />
+                          </div>
+                          
+                          <div className="flex-1">
+                            <div className="flex items-start justify-between mb-2">
+                              <h3 className="font-semibold text-gray-900 text-lg">
+                                {service.name}
+                              </h3>
+                              <div className="flex gap-2 ml-4">
+                                {service.popular && (
+                                  <Badge className="bg-green-100 text-green-700 border-green-200">
+                                    <Star className="w-3 h-3 mr-1" />
+                                    Popular
+                                  </Badge>
+                                )}
+                                <Badge variant="outline" className="capitalize">
+                                  {service.category}
+                                </Badge>
+                              </div>
+                            </div>
+                            
+                            <p className="text-gray-600 mb-4">
+                              {service.description}
+                            </p>
+                            
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-4 text-sm text-gray-500">
+                                {service.estimated_time && (
+                                  <div className="flex items-center gap-1">
+                                    <Clock className="w-4 h-4" />
+                                    {service.estimated_time}
+                                  </div>
+                                )}
+                                {service.difficulty && (
+                                  <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    service.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
+                                    service.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                                    'bg-red-100 text-red-700'
+                                  }`}>
+                                    {service.difficulty}
+                                  </div>
+                                )}
+                              </div>
+                              <ArrowRight className="w-5 h-5 text-gray-400" />
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Help Section */}
+      <div className="bg-gradient-to-r from-orange-50 to-green-50 rounded-2xl p-8 text-center">
+        <h3 className="text-xl font-bold text-gray-900 mb-2">
+          {t('cantFind')}
+        </h3>
+        <p className="text-gray-600 mb-6">
+          {t('cantFindSubtitle')}
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Link to={createPageUrl("Services")}>
+            <button className="bg-white hover:bg-gray-50 border border-gray-200 hover:border-orange-300 rounded-xl px-6 py-3 font-medium text-gray-700 hover:text-orange-700 transition-all hover-lift">
+              {t('browseAllServices')}
+            </button>
+          </Link>
+          <Link to={createPageUrl("Home")}>
+            <button className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl px-6 py-3 font-medium transition-all hover-lift">
+              {t('backToHome')}
+            </button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}

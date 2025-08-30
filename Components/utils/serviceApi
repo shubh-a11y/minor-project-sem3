@@ -1,0 +1,41 @@
+// Service API for fetching service data
+
+// Dummy data for demonstration. Replace with real API or data source.
+const demoServices = [
+  {
+    id: "digilocker",
+    name: "DigiLocker Access",
+    category: "documents",
+    description: "Access your digital documents instantly",
+    instructions: [
+      {
+        step: 1,
+        title: "Go to DigiLocker",
+        description: "Visit the official DigiLocker website.",
+        url: "https://digilocker.gov.in/",
+        requirements: ["Aadhaar number", "Mobile number"]
+      }
+    ],
+    official_website: "https://digilocker.gov.in/",
+    difficulty: "easy",
+    estimated_time: "5 minutes",
+    languages: ["en", "hi"],
+    popular: true
+  },
+  // Add more demo services as needed
+];
+
+export const Service = {
+  async list(sort = "", limit = 100) {
+    // Simulate API call
+    let services = [...demoServices];
+    if (sort === "-popular") {
+      services.sort((a, b) => (b.popular ? 1 : -1));
+    }
+    return services.slice(0, limit);
+  },
+  async get(id) {
+    // Simulate API call
+    return demoServices.find(s => s.id === id);
+  }
+};
