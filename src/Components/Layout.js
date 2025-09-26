@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { createPageUrl } from "../Components/utils/createPageUrl";
+import { createPageUrl } from "./utils/createPageUrl";
 import { 
   Home, 
   Search, 
@@ -13,14 +13,14 @@ import {
   Globe,
   ChevronDown
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { LanguageProvider, useLanguage } from './components/contexts/LanguageContext';
+} from "./ui/dropdown-menu";
+import { useLanguage } from './contexts/LanguageContext';
 
 const languages = [
   { code: 'en', name: 'English', native: 'English' },
@@ -60,38 +60,6 @@ const MainLayout = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 to-green-50">
-      <style>{`
-        :root {
-          --saffron: #FF9933;
-          --white: #FFFFFF;
-          --green: #138808;
-          --saffron-light: #FFB366;
-          --green-light: #4CAF50;
-          --text-primary: #1a1a1a;
-          --text-secondary: #666666;
-        }
-        
-        .tricolor-gradient {
-          background: linear-gradient(135deg, var(--saffron) 0%, var(--white) 50%, var(--green) 100%);
-        }
-        
-        .saffron-shadow {
-          box-shadow: 0 4px 20px rgba(255, 153, 51, 0.15);
-        }
-        
-        .green-shadow {
-          box-shadow: 0 4px 20px rgba(19, 136, 8, 0.15);
-        }
-        
-        .hover-lift {
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .hover-lift:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-        }
-      `}</style>
 
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-orange-100 saffron-shadow">
@@ -249,9 +217,5 @@ const MainLayout = ({ children }) => {
 };
 
 export default function Layout({ children }) {
-  return (
-    <LanguageProvider>
-      <MainLayout>{children}</MainLayout>
-    </LanguageProvider>
-  );
-}
+  return <MainLayout>{children}</MainLayout>;
+} 

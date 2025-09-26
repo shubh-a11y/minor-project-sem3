@@ -13,10 +13,10 @@ import {
   Clock,
   Star
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useLanguage } from '../components/contexts/LanguageContext';
+import { Button } from "../Components/ui/button";
+import { Card, CardContent } from "../Components/ui/card";
+import { Badge } from "../Components/ui/badge";
+import { useLanguage } from "../Components/contexts/LanguageContext";
 
 const featuredServices = [
   {
@@ -256,4 +256,4 @@ export default function HomePage() {
       </section>
     </div>
   );
-}
+} 
