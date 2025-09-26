@@ -12,7 +12,6 @@ import {
   ChevronDown
 } from "lucide-react";
 import { useLanguage } from './contexts/LanguageContext';
-import "../styles.css";
 
 const languages = [
   { code: 'en', name: 'English', native: 'English' },
