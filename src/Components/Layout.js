@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "./utils/createPageUrl";
-import {
+import
+{
   Home,
   Search,
   FileText,
@@ -12,6 +13,7 @@ import {
   ChevronDown
 } from "lucide-react";
 import { useLanguage } from './contexts/LanguageContext';
+import { useTheme } from './contexts/ThemeContext';
 import { ThemeToggleButton } from './ui/ThemeToggleButton';
 
 const languages = [
@@ -25,28 +27,30 @@ const languages = [
   { code: 'kn', name: 'Kannada', native: 'ಕನ್ನಡ' },
 ];
 
-const MainLayout = ({ children }) => {
+const MainLayout = ( { children } ) =>
+{
   const location = useLocation();
   const { language, setLanguage, t } = useLanguage();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
+  const { theme } = useTheme();
+  const [ mobileMenuOpen, setMobileMenuOpen ] = useState( false );
+  const [ languageDropdownOpen, setLanguageDropdownOpen ] = useState( false );
 
-  const currentLang = languages.find(l => l.code === language);
+  const currentLang = languages.find( l => l.code === language );
 
   const navigationItems = [
     {
-      title: t('navHome'),
-      url: createPageUrl("Home"),
+      title: t( 'navHome' ),
+      url: createPageUrl( "Home" ),
       icon: Home,
     },
     {
-      title: t('navServices'),
-      url: createPageUrl("Services"),
+      title: t( 'navServices' ),
+      url: createPageUrl( "Services" ),
       icon: FileText,
     },
     {
-      title: t('navSearch'),
-      url: createPageUrl("Search"),
+      title: t( 'navSearch' ),
+      url: createPageUrl( "Search" ),
       icon: Search,
     }
   ];
@@ -54,129 +58,137 @@ const MainLayout = ({ children }) => {
   return (
     <div className="app-container bg-white dark:bg-gray-900">
 
-      {/* Header */}
+      {/* Header */ }
       <header className="gov-header bg-white dark:bg-gray-800">
         <div className="header-content">
-          <Link to={createPageUrl("Home")} className="logo-container">
+          <Link to={ createPageUrl( "Home" ) } className="logo-container">
             <div className="logo-icon">
               <Shield className="text-white" />
             </div>
             <div className="logo-text">
-              <h1 className="logo-title text-gray-800 dark:text-white">{t('govAssist')}</h1>
-              <p className="logo-subtitle text-gray-600 dark:text-gray-300">{t('tagline')}</p>
+              <h1 className="logo-title text-gray-800 dark:text-white">{ t( 'govAssist' ) }</h1>
+              <p className="logo-subtitle text-gray-600 dark:text-gray-300">{ t( 'tagline' ) }</p>
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation */ }
           <nav className="nav-desktop">
-            {navigationItems.map((item) => (
+            { navigationItems.map( ( item ) => (
               <Link
-                key={item.title}
-                to={item.url}
-                className={`nav-link text-gray-600 dark:text-gray-300 ${location.pathname === item.url ? 'active' : ''}`}
+                key={ item.title }
+                to={ item.url }
+                className={ `nav-link ${ theme === 'dark'
+                    ? 'text-gray-200 dark:text-gray-200'
+                    : 'text-gray-600 dark:text-gray-300'
+                  } ${ location.pathname === item.url ? 'active' : '' }` }
               >
                 <item.icon className="nav-icon" />
-                {item.title}
+                { item.title }
               </Link>
-            ))}
+            ) ) }
           </nav>
 
           <div className="flex items-center gap-md">
-            {/* Language Selector - Hidden on mobile */}
+            {/* Language Selector - Hidden on mobile */ }
             <div className="language-selector hidden-mobile">
               <button
                 className="language-button text-gray-600 dark:text-gray-300"
-                onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
+                onClick={ () => setLanguageDropdownOpen( !languageDropdownOpen ) }
               >
                 <Globe className="w-4 h-4" />
-                <span className="language-text">{currentLang?.native}</span>
+                <span className="language-text">{ currentLang?.native }</span>
                 <ChevronDown className="w-3 h-3" />
               </button>
 
-              <div className={`language-dropdown ${languageDropdownOpen ? 'open' : ''}`}>
-                {languages.map((lang) => (
+              <div className={ `language-dropdown ${ languageDropdownOpen ? 'open' : '' }` }>
+                { languages.map( ( lang ) => (
                   <div
-                    key={lang.code}
-                    className={`language-option ${language === lang.code ? 'active' : ''}`}
-                    onClick={() => {
-                      setLanguage(lang.code);
-                      setLanguageDropdownOpen(false);
-                    }}
+                    key={ lang.code }
+                    className={ `language-option ${ language === lang.code ? 'active' : '' }` }
+                    onClick={ () =>
+                    {
+                      setLanguage( lang.code );
+                      setLanguageDropdownOpen( false );
+                    } }
                   >
-                    <span className="language-native">{lang.native}</span>
-                    <span className="language-english">({lang.name})</span>
+                    <span className="language-native">{ lang.native }</span>
+                    <span className="language-english">({ lang.name })</span>
                   </div>
-                ))}
+                ) ) }
               </div>
             </div>
 
             <ThemeToggleButton />
 
-            {/* Mobile Menu Toggle */}
+            {/* Mobile Menu Toggle */ }
             <button
               className="mobile-menu-button text-gray-600 dark:text-gray-300"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={ () => setMobileMenuOpen( !mobileMenuOpen ) }
             >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              { mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" /> }
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        <nav className={`mobile-nav ${mobileMenuOpen ? 'open' : ''}`}>
-          {navigationItems.map((item) => (
+        {/* Mobile Navigation */ }
+        <nav className={ `mobile-nav ${ mobileMenuOpen ? 'open' : '' }` }>
+          { navigationItems.map( ( item ) => (
             <Link
-              key={item.title}
-              to={item.url}
-              className={`mobile-nav-link text-gray-600 dark:text-gray-300 ${location.pathname === item.url ? 'active' : ''}`}
-              onClick={() => setMobileMenuOpen(false)}
+              key={ item.title }
+              to={ item.url }
+              className={ `mobile-nav-link ${ theme === 'dark'
+                  ? 'text-gray-200 dark:text-gray-200'
+                  : 'text-gray-600 dark:text-gray-300'
+                } ${ location.pathname === item.url ? 'active' : '' }` }
+              onClick={ () => setMobileMenuOpen( false ) }
             >
               <item.icon className="mobile-nav-icon" />
-              {item.title}
+              { item.title }
             </Link>
-          ))}
+          ) ) }
 
           <div className="mobile-language-selector">
             <button
               className="mobile-language-button text-gray-600 dark:text-gray-300"
-              onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
+              onClick={ () => setLanguageDropdownOpen( !languageDropdownOpen ) }
             >
               <span>
                 <Globe className="w-4 h-4 inline mr-2" />
-                {currentLang?.native}
+                { currentLang?.native }
               </span>
               <ChevronDown className="w-3 h-3" />
             </button>
 
-            {languageDropdownOpen && (
+            { languageDropdownOpen && (
               <div className="mobile-language-options">
-                {languages.map((lang) => (
+                { languages.map( ( lang ) => (
                   <div
-                    key={lang.code}
-                    className={`mobile-language-option ${language === lang.code ? 'active' : ''}`}
-                    onClick={() => {
-                      setLanguage(lang.code);
-                      setLanguageDropdownOpen(false);
-                    }}
+                    key={ lang.code }
+                    className={ `mobile-language-option ${ language === lang.code ? 'active' : '' }` }
+                    onClick={ () =>
+                    {
+                      setLanguage( lang.code );
+                      setLanguageDropdownOpen( false );
+                    } }
                   >
-                    <span className="language-native">{lang.native}</span>
-                    <span className="language-english">({lang.name})</span>
+                    <span className="language-native">{ lang.native }</span>
+                    <span className="language-english">({ lang.name })</span>
                   </div>
-                ))}
+                ) ) }
               </div>
-            )}
+            ) }
           </div>
         </nav>
       </header>
 
-      {/* Main Content */}
+      {/* Main Content */ }
       <main className="main-content bg-white dark:bg-gray-900">
         <div className="content-container">
-          {children}
+          { children }
         </div>
       </main>
 
-      {/* Footer */}
+      {/* Footer */ }
       <footer className="gov-footer bg-gray-800 dark:bg-gray-900">
         <div className="footer-content">
           <div className="footer-grid">
@@ -185,36 +197,36 @@ const MainLayout = ({ children }) => {
                 <div className="footer-logo-icon">
                   <Shield className="text-white" />
                 </div>
-                <span className="footer-logo-text text-white">{t('govAssist')}</span>
+                <span className="footer-logo-text text-white">{ t( 'govAssist' ) }</span>
               </div>
               <p className="footer-description text-gray-300">
-                {t('footerDescription')}
+                { t( 'footerDescription' ) }
               </p>
             </div>
 
             <div className="footer-section">
               <h3 className="text-white">Quick Links</h3>
               <ul className="footer-services text-gray-300">
-                <li><Link to={createPageUrl("Services")} className="hover:text-orange-400">All Services</Link></li>
-                <li><Link to={createPageUrl("Search")} className="hover:text-orange-400">Search</Link></li>
+                <li><Link to={ createPageUrl( "Services" ) } className="hover:text-orange-400">All Services</Link></li>
+                <li><Link to={ createPageUrl( "Search" ) } className="hover:text-orange-400">Search</Link></li>
                 <li><Link to="/faq" className="hover:text-orange-400">FAQ</Link></li>
               </ul>
             </div>
 
             <div className="footer-section">
-              <h3 className="text-white">{t('privacyAndTrust')}</h3>
+              <h3 className="text-white">{ t( 'privacyAndTrust' ) }</h3>
               <div className="footer-privacy text-gray-300">
                 <div className="privacy-item">
                   <Shield className="privacy-icon" />
-                  <span>{t('privacy1')}</span>
+                  <span>{ t( 'privacy1' ) }</span>
                 </div>
                 <div className="privacy-item">
                   <Shield className="privacy-icon" />
-                  <span>{t('privacy2')}</span>
+                  <span>{ t( 'privacy2' ) }</span>
                 </div>
                 <div className="privacy-item">
                   <Shield className="privacy-icon" />
-                  <span>{t('privacy3')}</span>
+                  <span>{ t( 'privacy3' ) }</span>
                 </div>
               </div>
             </div>
@@ -222,9 +234,9 @@ const MainLayout = ({ children }) => {
 
           <div className="footer-bottom">
             <p className="copyright text-gray-300">
-              {t('copyright')}
+              { t( 'copyright' ) }
               <span>•</span>
-              {t('notAffiliated')}
+              { t( 'notAffiliated' ) }
             </p>
           </div>
         </div>
@@ -233,6 +245,7 @@ const MainLayout = ({ children }) => {
   );
 };
 
-export default function Layout({ children }) {
-  return <MainLayout>{children}</MainLayout>;
+export default function Layout ( { children } )
+{
+  return <MainLayout>{ children }</MainLayout>;
 }

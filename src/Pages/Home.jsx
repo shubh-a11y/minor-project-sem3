@@ -218,7 +218,7 @@ export default function HomePage() {
 					{featuredServices.map((service) => (
 						<Card
 							key={service.name}
-							className="h-full hover-lift cursor-pointer border-0 saffron-shadow bg-white/80 backdrop-blur dark:bg-gray-800/80 dark:hover:bg-gray-500/80 border-2"
+							className="h-full hover-lift cursor-pointer saffron-shadow bg-white/80 backdrop-blur dark:bg-gray-800/80 dark:hover:bg-gray-500/80 "
 						>
 							<CardContent className="p-6 flex flex-col">
 								<div className="flex items-center justify-between mb-4">
