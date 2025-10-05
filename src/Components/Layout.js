@@ -12,6 +12,7 @@ import {
   ChevronDown
 } from "lucide-react";
 import { useLanguage } from './contexts/LanguageContext';
+import { ThemeToggleButton } from './ui/ThemeToggleButton';
 
 const languages = [
   { code: 'en', name: 'English', native: 'English' },
@@ -28,6 +29,7 @@ const MainLayout = ({ children }) => {
   const location = useLocation();
   const { language, setLanguage, t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
 
   const currentLang = languages.find(l => l.code === language);
 
@@ -49,21 +51,19 @@ const MainLayout = ({ children }) => {
     }
   ];
 
-  const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
-
   return (
-    <div className="app-container">
+    <div className="app-container bg-white dark:bg-gray-900">
 
       {/* Header */}
-      <header className="gov-header">
+      <header className="gov-header bg-white dark:bg-gray-800">
         <div className="header-content">
           <Link to={createPageUrl("Home")} className="logo-container">
             <div className="logo-icon">
               <Shield className="text-white" />
             </div>
             <div className="logo-text">
-              <h1 className="logo-title">{t('govAssist')}</h1>
-              <p className="logo-subtitle">{t('tagline')}</p>
+              <h1 className="logo-title text-gray-800 dark:text-white">{t('govAssist')}</h1>
+              <p className="logo-subtitle text-gray-600 dark:text-gray-300">{t('tagline')}</p>
             </div>
           </Link>
 
@@ -73,7 +73,7 @@ const MainLayout = ({ children }) => {
               <Link
                 key={item.title}
                 to={item.url}
-                className={`nav-link ${location.pathname === item.url ? 'active' : ''}`}
+                className={`nav-link text-gray-600 dark:text-gray-300 ${location.pathname === item.url ? 'active' : ''}`}
               >
                 <item.icon className="nav-icon" />
                 {item.title}
@@ -85,7 +85,7 @@ const MainLayout = ({ children }) => {
             {/* Language Selector - Hidden on mobile */}
             <div className="language-selector hidden-mobile">
               <button
-                className="language-button"
+                className="language-button text-gray-600 dark:text-gray-300"
                 onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
               >
                 <Globe className="w-4 h-4" />
@@ -110,9 +110,11 @@ const MainLayout = ({ children }) => {
               </div>
             </div>
 
+            <ThemeToggleButton />
+
             {/* Mobile Menu Toggle */}
             <button
-              className="mobile-menu-button"
+              className="mobile-menu-button text-gray-600 dark:text-gray-300"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -126,7 +128,7 @@ const MainLayout = ({ children }) => {
             <Link
               key={item.title}
               to={item.url}
-              className={`mobile-nav-link ${location.pathname === item.url ? 'active' : ''}`}
+              className={`mobile-nav-link text-gray-600 dark:text-gray-300 ${location.pathname === item.url ? 'active' : ''}`}
               onClick={() => setMobileMenuOpen(false)}
             >
               <item.icon className="mobile-nav-icon" />
@@ -136,7 +138,7 @@ const MainLayout = ({ children }) => {
 
           <div className="mobile-language-selector">
             <button
-              className="mobile-language-button"
+              className="mobile-language-button text-gray-600 dark:text-gray-300"
               onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
             >
               <span>
@@ -168,14 +170,14 @@ const MainLayout = ({ children }) => {
       </header>
 
       {/* Main Content */}
-      <main className="main-content">
+      <main className="main-content bg-white dark:bg-gray-900">
         <div className="content-container">
           {children}
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="gov-footer">
+      <footer className="gov-footer bg-gray-800 dark:bg-gray-900">
         <div className="footer-content">
           <div className="footer-grid">
             <div className="footer-brand">
@@ -183,26 +185,25 @@ const MainLayout = ({ children }) => {
                 <div className="footer-logo-icon">
                   <Shield className="text-white" />
                 </div>
-                <span className="footer-logo-text">{t('govAssist')}</span>
+                <span className="footer-logo-text text-white">{t('govAssist')}</span>
               </div>
-              <p className="footer-description">
+              <p className="footer-description text-gray-300">
                 {t('footerDescription')}
               </p>
             </div>
 
             <div className="footer-section">
-              <h3>{t('popularServices')}</h3>
-              <ul className="footer-services">
-                <li>DigiLocker Access</li>
-                <li>Aadhaar Services</li>
-                <li>PAN Card Application</li>
-                <li>Educational Certificates</li>
+              <h3 className="text-white">Quick Links</h3>
+              <ul className="footer-services text-gray-300">
+                <li><Link to={createPageUrl("Services")} className="hover:text-orange-400">All Services</Link></li>
+                <li><Link to={createPageUrl("Search")} className="hover:text-orange-400">Search</Link></li>
+                <li><Link to="/faq" className="hover:text-orange-400">FAQ</Link></li>
               </ul>
             </div>
 
             <div className="footer-section">
-              <h3>{t('privacyAndTrust')}</h3>
-              <div className="footer-privacy">
+              <h3 className="text-white">{t('privacyAndTrust')}</h3>
+              <div className="footer-privacy text-gray-300">
                 <div className="privacy-item">
                   <Shield className="privacy-icon" />
                   <span>{t('privacy1')}</span>
@@ -220,7 +221,7 @@ const MainLayout = ({ children }) => {
           </div>
 
           <div className="footer-bottom">
-            <p className="copyright">
+            <p className="copyright text-gray-300">
               {t('copyright')}
               <span>•</span>
               {t('notAffiliated')}

@@ -83,10 +83,10 @@ export default function ServicesPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
           Government Services
         </h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-gray-600 dark:text-gray-300">
           Find and access government services with step-by-step guidance
         </p>
       </div>
@@ -98,12 +98,12 @@ export default function ServicesPage() {
             placeholder="Search services..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1"
+            className="flex-1 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"
           />
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-md"
+            className="px-4 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"
           >
             {categories.map(category => (
               <option key={category} value={category}>
@@ -114,7 +114,7 @@ export default function ServicesPage() {
           <select
             value={selectedDifficulty}
             onChange={(e) => setSelectedDifficulty(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-md"
+            className="px-4 py-2 border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700"
           >
             {difficulties.map(difficulty => (
               <option key={difficulty} value={difficulty}>
@@ -132,35 +132,35 @@ export default function ServicesPage() {
           const categoryColor = categoryColors[service.category] || "bg-gray-100 text-gray-700 border-gray-200";
           
           return (
-            <Card key={service.id} className="hover-lift cursor-pointer border-0 saffron-shadow bg-white/80 backdrop-blur">
+            <Card key={service.id} className="hover-lift cursor-pointer border-0 saffron-shadow bg-white/80 backdrop-blur dark:bg-gray-800/80 dark:hover:bg-gray-600/80">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className={`w-12 h-12 rounded-xl ${categoryColor} flex items-center justify-center`}>
+                  <div className={`w-12 h-12 rounded-xl ${categoryColor} flex items-center justify-center dark:bg-opacity-20`}>
                     <CategoryIcon className="w-6 h-6" />
                   </div>
                   {service.popular && (
-                    <Badge className="bg-green-100 text-green-700 border-green-200">
+                    <Badge className="bg-green-100 text-green-700 border-green-200 dark:bg-green-900 dark:text-green-300 dark:border-green-700">
                       Popular
                     </Badge>
                   )}
                 </div>
                 
-                <h3 className="font-semibold text-gray-900 mb-2">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                   {service.name}
                 </h3>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                   {service.description}
                 </p>
                 
-                <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
+                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-4">
                   <div className="flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     {service.time}
                   </div>
                   <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    service.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
-                    service.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                    'bg-red-100 text-red-700'
+                    service.difficulty === 'easy' ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300' :
+                    service.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300' :
+                    'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
                   }`}>
                     {service.difficulty}
                   </div>
@@ -180,7 +180,7 @@ export default function ServicesPage() {
 
       {filteredServices.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">No services found matching your criteria.</p>
+          <p className="text-gray-500 dark:text-gray-400">No services found matching your criteria.</p>
         </div>
       )}
     </div>
