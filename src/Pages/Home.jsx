@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../Components/utils/createPageUrl";
+import { services } from "../Components/utils/serviceApi";
+import { getTranslatedService } from "../Components/utils/serviceTranslations";
 import { 
   FileText, 
   CreditCard, 
@@ -18,54 +20,32 @@ import { Card, CardContent } from "../Components/ui/card";
 import { Badge } from "../Components/ui/badge";
 import { useLanguage } from "../Components/contexts/LanguageContext";
 
-const featuredServices = [
-  {
-    name: "DigiLocker Access",
-    description: "Access your digital documents instantly",
-    category: "documents",
-    icon: FileText,
-    difficulty: "easy",
-    time: "5 minutes",
-    popular: true
-  },
-  {
-    name: "Aadhaar Services",
-    description: "Update, download, and verify your Aadhaar",
-    category: "identity",
-    icon: CreditCard,
-    difficulty: "easy",
-    time: "10 minutes",
-    popular: true
-  },
-  {
-    name: "Educational Certificates",
-    description: "Get your 10th, 12th, and degree certificates",
-    category: "education",
-    icon: GraduationCap,
-    difficulty: "medium",
-    time: "15 minutes",
-    popular: true
-  },
-  {
-    name: "Health Insurance Schemes",
-    description: "Apply for Ayushman Bharat and state schemes",
-    category: "health",
-    icon: Heart,
-    difficulty: "medium",
-    time: "20 minutes",
-    popular: false
-  }
-];
-
-const categories = [
-  { name: "Documents", icon: FileText, count: 15, color: "bg-blue-100 text-blue-700" },
-  { name: "Identity", icon: CreditCard, count: 8, color: "bg-orange-100 text-orange-700" },
-  { name: "Education", icon: GraduationCap, count: 12, color: "bg-green-100 text-green-700" },
-  { name: "Health", icon: Heart, count: 9, color: "bg-red-100 text-red-700" }
-];
+const categoryIcons = {
+  documents: FileText,
+  identity: CreditCard,
+  education: GraduationCap,
+  health: Heart
+};
 
 export default function HomePage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  
+  // Get translated featured services (first 4 services)
+  const featuredServices = services.slice(0, 4).map(service => {
+    const translated = getTranslatedService(service, language);
+    return {
+      ...translated,
+      icon: categoryIcons[service.category] || FileText
+    };
+  });
+  
+  // Categories with translated names
+  const categories = [
+    { name: t('catDocuments'), icon: FileText, count: 15, color: "bg-blue-100 text-blue-700" },
+    { name: t('catIdentity'), icon: CreditCard, count: 8, color: "bg-orange-100 text-orange-700" },
+    { name: t('catEducation'), icon: GraduationCap, count: 12, color: "bg-green-100 text-green-700" },
+    { name: t('catHealth'), icon: Heart, count: 9, color: "bg-red-100 text-red-700" }
+  ];
   
   const stats = [
     { label: t('statsTotalServices'), value: "50+", icon: FileText },

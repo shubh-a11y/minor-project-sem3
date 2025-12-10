@@ -7,6 +7,7 @@ import {
   toggleStepCompletion, 
   generateServicePDF 
 } from "../Components/utils/serviceApi";
+import { getTranslatedService } from "../Components/utils/serviceTranslations";
 import { 
   ArrowLeft,
   Clock,
@@ -48,7 +49,7 @@ const categoryIcons = {
 
 
 export default function ServiceGuidePage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
   const [completedSteps, setCompletedSteps] = useState([]);
@@ -61,14 +62,16 @@ export default function ServiceGuidePage() {
     if (serviceId) {
       loadService(serviceId);
     }
-  }, [location.search]);
+  }, [location.search, language]);
 
 
   const loadService = async (id) => {
     setLoading(true);
     try {
       const data = getServiceById(id);
-      setService(data);
+      // Apply translations based on current language
+      const translatedData = getTranslatedService(data, language);
+      setService(translatedData);
       
       // Load progress for this service
       const progress = getServiceProgress(id);
@@ -118,9 +121,9 @@ export default function ServiceGuidePage() {
   if (!service) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
-        <h2 className="text-2xl font-bold text-gray-700">Service not found</h2>
+        <h2 className="text-2xl font-bold text-gray-700">{t('serviceNotFound')}</h2>
         <Link to={createPageUrl("Services")}>
-          <Button className="mt-4">Back to Services</Button>
+          <Button className="mt-4">{t('backToServices')}</Button>
         </Link>
       </div>
     );
@@ -144,7 +147,7 @@ export default function ServiceGuidePage() {
         <Link to={createPageUrl("Services")}>
           <Button variant="outline" className="gap-2">
             <ArrowLeft className="w-4 h-4" />
-            Back to Services
+            {t('backToServices')}
           </Button>
         </Link>
       </div>
@@ -182,7 +185,7 @@ export default function ServiceGuidePage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Shield className="w-6 h-6 text-green-600" />
-            Step-by-Step Guide
+            {t('stepByStepGuide')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -244,7 +247,7 @@ export default function ServiceGuidePage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FolderCheck className="w-6 h-6 text-orange-600" />
-              Required Documents
+              {t('requiredDocuments')}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -270,7 +273,7 @@ export default function ServiceGuidePage() {
             </div>
             <div className="mt-4 p-3 bg-orange-50 rounded-lg border border-orange-100">
               <p className="text-sm text-orange-800">
-                <strong>Note:</strong> Carry original documents along with self-attested photocopies for verification.
+                <strong>Note:</strong> {t('documentNote')}
               </p>
             </div>
           </CardContent>
@@ -286,7 +289,7 @@ export default function ServiceGuidePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-green-700">
                 <IndianRupee className="w-6 h-6" />
-                Application Fees
+                {t('applicationFees')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -302,7 +305,7 @@ export default function ServiceGuidePage() {
               ))}
               <div className="mt-3 p-2 bg-green-100 rounded text-center">
                 <p className="text-xs text-green-800">
-                  Fees are subject to change. Please verify on official website.
+                  {t('feesNote')}
                 </p>
               </div>
             </CardContent>
@@ -316,7 +319,7 @@ export default function ServiceGuidePage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-blue-700">
                 <Hourglass className="w-6 h-6" />
-                Processing Time
+                {t('processingTime')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -332,7 +335,7 @@ export default function ServiceGuidePage() {
               ))}
               <div className="mt-3 p-2 bg-blue-100 rounded text-center">
                 <p className="text-xs text-blue-800">
-                  Processing times may vary based on volume and verification.
+                  {t('processingNote')}
                 </p>
               </div>
             </CardContent>
@@ -347,35 +350,35 @@ export default function ServiceGuidePage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-orange-700">
               <Phone className="w-6 h-6" />
-              Need Help? Contact Support
+              {t('needHelp')}
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between p-4 bg-white rounded-lg border-2 border-orange-200">
               <div>
-                <p className="text-sm text-gray-600 mb-1">Helpline Number</p>
+                <p className="text-sm text-gray-600 mb-1">{t('helplineNumber')}</p>
                 <p className="text-2xl font-bold text-orange-600">{service.helpline}</p>
-                <p className="text-xs text-gray-500 mt-1">Available during business hours</p>
+                <p className="text-xs text-gray-500 mt-1">{t('availableHours')}</p>
               </div>
               <Button 
                 onClick={() => window.open(`tel:${service.helpline}`, '_self')}
                 className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700"
               >
                 <Phone className="w-4 h-4 mr-2" />
-                Call Now
+                {t('callNow')}
               </Button>
             </div>
             <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="text-center p-3 bg-orange-50 rounded-lg">
-                <p className="text-xs text-gray-600">Email Support</p>
-                <p className="text-sm font-medium text-orange-700">Available</p>
+                <p className="text-xs text-gray-600">{t('emailSupport')}</p>
+                <p className="text-sm font-medium text-orange-700">{t('available')}</p>
               </div>
               <div className="text-center p-3 bg-green-50 rounded-lg">
-                <p className="text-xs text-gray-600">Chat Support</p>
-                <p className="text-sm font-medium text-green-700">Online</p>
+                <p className="text-xs text-gray-600">{t('chatSupport')}</p>
+                <p className="text-sm font-medium text-green-700">{t('online')}</p>
               </div>
               <div className="text-center p-3 bg-blue-50 rounded-lg">
-                <p className="text-xs text-gray-600">Response Time</p>
+                <p className="text-xs text-gray-600">{t('responseTime')}</p>
                 <p className="text-sm font-medium text-blue-700">24-48 hrs</p>
               </div>
             </div>
@@ -388,11 +391,11 @@ export default function ServiceGuidePage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card className="border-0 bg-white/80 backdrop-blur shadow-md">
           <CardHeader>
-            <CardTitle className="text-lg">Service Details</CardTitle>
+            <CardTitle className="text-lg">{t('serviceDetails')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex justify-between">
-              <span className="text-gray-600">Difficulty:</span>
+              <span className="text-gray-600">{t('difficulty')}:</span>
               <Badge className={
                 service.difficulty === 'easy' ? 'bg-green-100 text-green-700' :
                 service.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
@@ -402,18 +405,18 @@ export default function ServiceGuidePage() {
               </Badge>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Category:</span>
+              <span className="text-gray-600">{t('category')}:</span>
               <span className="font-medium capitalize">{service.category}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-600">Estimated Time:</span>
+              <span className="text-gray-600">{t('estimatedTime')}:</span>
               <span className="font-medium">{service.time}</span>
             </div>
             {service.popular && (
               <div className="flex justify-between">
-                <span className="text-gray-600">Status:</span>
+                <span className="text-gray-600">{t('status')}:</span>
                 <Badge className="bg-purple-100 text-purple-700 border-purple-200">
-                  Popular Service
+                  {t('popularService')}
                 </Badge>
               </div>
             )}
@@ -423,7 +426,7 @@ export default function ServiceGuidePage() {
 
         <Card className="border-0 bg-white/80 backdrop-blur shadow-md">
           <CardHeader>
-            <CardTitle className="text-lg">Quick Actions</CardTitle>
+            <CardTitle className="text-lg">{t('quickActionsGuide')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <Button 
@@ -432,7 +435,7 @@ export default function ServiceGuidePage() {
               className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ExternalLink className="w-4 h-4 mr-2" />
-              Visit Official Website
+              {t('visitOfficialWebsite')}
             </Button>
             <Button 
               onClick={handleDownloadChecklist}
@@ -440,11 +443,11 @@ export default function ServiceGuidePage() {
               className="w-full border-green-200 hover:bg-green-50"
             >
               <Download className="w-4 h-4 mr-2" />
-              Download Checklist
+              {t('downloadChecklist')}
             </Button>
             <div className="bg-gradient-to-r from-orange-50 to-green-50 p-4 rounded-lg border border-orange-100">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">Your Progress</span>
+                <span className="text-sm font-medium text-gray-700">{t('yourProgress')}</span>
                 <span className="text-sm font-bold text-orange-600">
                   {completedSteps.length}/{service.steps.length}
                 </span>
@@ -459,8 +462,8 @@ export default function ServiceGuidePage() {
               </div>
               <p className="text-xs text-gray-600 mt-2 text-center">
                 {completedSteps.length === service.steps.length 
-                  ? '🎉 All steps completed!' 
-                  : `${service.steps.length - completedSteps.length} steps remaining`}
+                  ? t('allStepsCompleted') 
+                  : `${service.steps.length - completedSteps.length} ${t('stepsRemaining')}`}
               </p>
             </div>
           </CardContent>
@@ -473,13 +476,13 @@ export default function ServiceGuidePage() {
         <Link to={createPageUrl("Services")}>
           <Button variant="outline" className="gap-2 border-orange-200 hover:bg-orange-50">
             <ArrowLeft className="w-4 h-4" />
-            Back to All Services
+            {t('backToAllServices')}
           </Button>
         </Link>
         
         <div className="text-center">
-          <p className="text-sm text-gray-500">Need assistance?</p>
-          <p className="text-sm font-medium text-orange-600">Contact our support team</p>
+          <p className="text-sm text-gray-500">{t('needAssistance')}</p>
+          <p className="text-sm font-medium text-orange-600">{t('contactSupport')}</p>
         </div>
 
         <Button 
@@ -487,7 +490,7 @@ export default function ServiceGuidePage() {
           disabled={!service.officialWebsite}
           className="gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700"
         >
-          Get Started
+          {t('getStarted')}
           <ChevronRight className="w-4 h-4" />
         </Button>
       </div>

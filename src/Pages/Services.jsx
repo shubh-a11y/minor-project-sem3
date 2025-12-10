@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../Components/utils/createPageUrl";
 import { services } from "../Components/utils/serviceApi";
+import { getTranslatedService } from "../Components/utils/serviceTranslations";
 import { 
   Search,
   Clock,
@@ -45,7 +46,7 @@ const categoryColors = {
 };
 
 export default function ServicesPage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [filteredServices, setFilteredServices] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -53,10 +54,11 @@ export default function ServicesPage() {
 
   useEffect(() => {
     filterServices();
-  }, [searchTerm, selectedCategory, selectedDifficulty]);
+  }, [searchTerm, selectedCategory, selectedDifficulty, language]);
 
   const filterServices = () => {
-    let filtered = services;
+    // First translate all services
+    let filtered = services.map(service => getTranslatedService(service, language));
 
     if (searchTerm) {
       filtered = filtered.filter(service =>
@@ -79,15 +81,40 @@ export default function ServicesPage() {
   const categories = ["all", "documents", "identity", "education", "health", "employment", "welfare", "banking", "tax"];
   const difficulties = ["all", "easy", "medium", "hard"];
 
+  const getCategoryName = (cat) => {
+    const catMap = {
+      all: t('allCategories'),
+      documents: t('catDocuments'),
+      identity: t('catIdentity'),
+      education: t('catEducation'),
+      health: t('catHealth'),
+      employment: t('catEmployment'),
+      welfare: t('catWelfare'),
+      banking: t('catBanking'),
+      tax: t('catTax')
+    };
+    return catMap[cat] || cat;
+  };
+
+  const getDifficultyName = (diff) => {
+    const diffMap = {
+      all: t('allDifficulties'),
+      easy: t('diffEasy'),
+      medium: t('diffMedium'),
+      hard: t('diffHard')
+    };
+    return diffMap[diff] || diff;
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Government Services
+          {t('governmentServices')}
         </h1>
         <p className="text-lg text-gray-600">
-          Find and access government services with step-by-step guidance
+          {t('findServices')}
         </p>
       </div>
 
@@ -95,7 +122,7 @@ export default function ServicesPage() {
       <div className="mb-8 space-y-4">
         <div className="flex flex-col sm:flex-row gap-4">
           <Input
-            placeholder="Search services..."
+            placeholder={t('searchServicesPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="flex-1"
@@ -107,7 +134,7 @@ export default function ServicesPage() {
           >
             {categories.map(category => (
               <option key={category} value={category}>
-                {category === 'all' ? 'All Categories' : category.charAt(0).toUpperCase() + category.slice(1)}
+                {getCategoryName(category)}
               </option>
             ))}
           </select>
@@ -118,7 +145,7 @@ export default function ServicesPage() {
           >
             {difficulties.map(difficulty => (
               <option key={difficulty} value={difficulty}>
-                {difficulty === 'all' ? 'All Difficulties' : difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+                {getDifficultyName(difficulty)}
               </option>
             ))}
           </select>
@@ -140,7 +167,7 @@ export default function ServicesPage() {
                   </div>
                   {service.popular && (
                     <Badge className="bg-green-100 text-green-700 border-green-200">
-                      Popular
+                      {t('popular')}
                     </Badge>
                   )}
                 </div>
@@ -162,13 +189,13 @@ export default function ServicesPage() {
                     service.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-700' :
                     'bg-red-100 text-red-700'
                   }`}>
-                    {service.difficulty}
+                    {getDifficultyName(service.difficulty)}
                   </div>
                 </div>
 
                 <Link to={createPageUrl(`ServiceGuide?id=${service.id}`)}>
                   <Button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white">
-                    View Guide
+                    {t('viewGuide')}
                     <ArrowRight className="ml-2 w-4 h-4" />
                   </Button>
                 </Link>
@@ -180,7 +207,7 @@ export default function ServicesPage() {
 
       {filteredServices.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">No services found matching your criteria.</p>
+          <p className="text-gray-500">{t('noServicesFound')}</p>
         </div>
       )}
     </div>
